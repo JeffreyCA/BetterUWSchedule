@@ -1,0 +1,18 @@
+html {
+    font-family: Calibri;
+    background-color: #1976d2;
+}
+
+body h1 {
+    color: white;
+    text-align: center;
+}
+
+body p {
+    color: white;
+    font-size: 18 px;
+}
+
+table {
+    background-color: #90caf9;
+}
