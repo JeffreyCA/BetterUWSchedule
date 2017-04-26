@@ -8,6 +8,6 @@
   "content_scripts": [{
     "css": ["styles.css"],
     "js": ["content.js"],
-    "matches": ["https://info.uwaterloo.ca/*", "http://www.adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl"]
+    "matches": ["https://info.uwaterloo.ca/*", "http://www.adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl*"]
   }]
 }
