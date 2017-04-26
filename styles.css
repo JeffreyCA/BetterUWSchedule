@@ -13,7 +13,8 @@ body h2, h3, h4 {
 }
 
 body h2 {
-   font-size: 48px;
+   font-size: 42px;
+   font-family: "Helvetica";
 }
 
 body h3 {
