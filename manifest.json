@@ -4,10 +4,12 @@
   "name": "Pretty UWaterloo Schedule",
   "version": "0.1.0",
   "description": "Improved look of UWaterloo's Schedule of Classes Page",
- 
+  "background": {
+    "scripts": ["jquery-3.2.1.min.js"]
+  },
   "content_scripts": [{
     "css": ["styles.css"],
-    "js": ["content.js"],
+    "js": ["jquery-3.2.1.min.js", "content.js"],
     "matches": ["https://info.uwaterloo.ca/*", "http://www.adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl*"]
   }]
 }

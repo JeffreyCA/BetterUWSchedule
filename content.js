@@ -1,8 +1,11 @@
 var array = [];
 var links = document.getElementsByTagName("a");
-for (var i=0, max=links.length; i<max; i++) {
+
+for (var i = 0, max = links.length; i < max; i++) {
     links[i].removeAttribute("href");
 }
+
+$('a').contents().unwrap();
 
 var first = document.getElementsByTagName("p")[0];
 var second = document.getElementsByTagName("p")[1];
@@ -11,14 +14,14 @@ var third = document.getElementsByTagName("p")[2];
 first.outerHTML = "";
 delete first;
 
-second.innerHTML = second.innerHTML.replace(/Your selection was:<br>/g,'');
-second.innerHTML = second.innerHTML.replace(/ ,/g,'<br>');
+second.innerHTML = second.innerHTML.replace(/Your selection was:<br>/g, "");
+second.innerHTML = second.innerHTML.replace(/ ,/g, "<br>");
 
 var Y = "Course Number: "
 var Z = second.innerHTML.split(Y).pop();
 
 if (Z === "") {
-    second.innerHTML = second.innerHTML.replace(/Course Number: /g,'Course Number: N/A');
+    second.innerHTML = second.innerHTML.replace(/Course Number: /g, "Course Number: N/A");
 }
 
 var table = document.getElementsByTagName("table")[0];
@@ -49,6 +52,7 @@ else {
     var line3 = unit + " units";
     
     var insert = `
+        <hr>
         <h2>${line1}</h2>
         <h3>${line2}</h3>
         <h4>${line3}</h4>
@@ -57,10 +61,56 @@ else {
 }
 
 var date = third.innerHTML.split("Information last updated: ").pop();
-date = date.replace(/<(?:.|\n)*?>/gm, '');
+date = date.replace(/<(?:.|\n)*?>/gm, "");
 
 console.log("Date: " + date);
 var d = new Date(date);
 
 third.innerHTML = third.innerHTML.replace(/Information last updated:(.*?)<\/b>/g, "Last updated on: <b>" + d.toDateString() + "</b>");
+
+// $('table th:nth-child(3), table td:nth-child(3)').remove();
+
+function remove(header) {
+  // Get target th with the name you want to remove.
+  var target = $('table').find('th:contains("' + header +'")');
+  // Find its index among other ths 
+  var index = (target).index() + 1;
+  console.log("index: " + index);
+  // For each tr, remove all th and td that match the index.
+  $('table th:nth-child(' + index + '), table td:nth-child(' + index + ')').remove();
+}
+
+remove('Rel 1');
+remove('Rel 2');
+remove('Bldg Room');
+   
+var el = third.getElementsByTagName("tr");
+var curId = -1;
+
+for (var i = 1; i < el.length; i++) {
+    if (el[i].getElementsByTagName("td")[0].colSpan == 6) {
+        el[i].getElementsByTagName("td")[0].colSpan = 4;
+        el[i].insertCell();
+        el[i].insertCell();
+    }
+    else {
+        el[i].style.cursor = "pointer";
+        curId++;
+    }
+    
+    el[i].className = curId;
+}
+
+$(".0:not(:first)").hide('fast');
+$(".1:not(:first)").hide('fast');
+
+$(".0:first").click(
+    function() {
+        $(".0:not(:first)").toggle('slow');
+});
+
+$(".1:first").click(
+    function() {
+        $(".1:not(:first)").toggle('slow');
+}); 
 
