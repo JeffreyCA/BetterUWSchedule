@@ -82,14 +82,13 @@ function remove(header) {
 
 remove('Rel 1');
 remove('Rel 2');
-remove('Bldg Room');
    
 var el = third.getElementsByTagName("tr");
 var curId = -1;
 
 for (var i = 1; i < el.length; i++) {
     if (el[i].getElementsByTagName("td")[0].colSpan == 6) {
-        el[i].getElementsByTagName("td")[0].colSpan = 4;
+        el[i].getElementsByTagName("td")[0].colSpan = 5;
         el[i].insertCell();
         el[i].insertCell();
     }
