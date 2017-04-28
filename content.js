@@ -71,13 +71,13 @@ third.innerHTML = third.innerHTML.replace(/Information last updated:(.*?)<\/b>/g
 // $('table th:nth-child(3), table td:nth-child(3)').remove();
 
 function remove(header) {
-  // Get target th with the name you want to remove.
-  var target = $('table').find('th:contains("' + header +'")');
-  // Find its index among other ths 
-  var index = (target).index() + 1;
-  console.log("index: " + index);
-  // For each tr, remove all th and td that match the index.
-  $('table th:nth-child(' + index + '), table td:nth-child(' + index + ')').remove();
+    // Get target th with the name you want to remove.
+    var target = $('table').find('th:contains("' + header +'")');
+    // Find its index among other ths 
+    var index = (target).index() + 1;
+    console.log("index: " + index);
+    // For each tr, remove all th and td that match the index.
+    $('table th:nth-child(' + index + '), table td:nth-child(' + index + ')').remove();
 }
 
 remove('Rel 1');
@@ -85,12 +85,21 @@ remove('Rel 2');
    
 var el = third.getElementsByTagName("tr");
 var curId = -1;
+var lastId = -1;
 
 for (var i = 1; i < el.length; i++) {
     if (el[i].getElementsByTagName("td")[0].colSpan == 6) {
-        el[i].getElementsByTagName("td")[0].colSpan = 5;
-        el[i].insertCell();
-        el[i].insertCell();
+        el[i].getElementsByTagName("td")[0].colSpan = 4;
+        var newCol = el[i].insertCell(); 
+        newCol.colSpan = 3;
+    }
+    else if (el[i].getElementsByTagName("td")[0].colSpan == 10) {
+        el[i].getElementsByTagName("td")[0].colSpan = 9;
+    }
+    else if (el[i].cells.length != 11) {
+        var newCol = el[i].insertCell(); 
+        newCol.colSpan = 11 - el[i].cells.length;
+        curId++;
     }
     else {
         el[i].style.cursor = "pointer";
@@ -100,16 +109,22 @@ for (var i = 1; i < el.length; i++) {
     el[i].className = curId;
 }
 
-$(".0:not(:first)").hide('fast');
-$(".1:not(:first)").hide('fast');
+// Do not show pointer cursor if no child elements to hide
+for (var i = 0; i < curId; i++) {
+    var numItems = $("." + i).length;
+    
+    if (numItems == 1 && $("." + i).first().css("cursor") == "pointer") {
+        $("." + i).first().css("cursor", "auto");
+    }
+}
 
-$(".0:first").click(
-    function() {
-        $(".0:not(:first)").toggle('slow');
-});
+console.log(curId);
 
-$(".1:first").click(
-    function() {
-        $(".1:not(:first)").toggle('slow');
-}); 
-
+for (let i = 0; i < curId; i++) {
+    $("." + i + ":not(:first)").hide('fast');
+    
+    $("." + i + ":first").on("click",
+        function() {
+            $("." + i + ":not(:first)").toggle('slow');
+    });
+}
