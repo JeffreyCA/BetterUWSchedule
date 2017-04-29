@@ -77,40 +77,97 @@ function remove(header) {
     var index = (target).index() + 1;
     console.log("index: " + index);
     // For each tr, remove all th and td that match the index.
-    $('table th:nth-child(' + index + '), table td:nth-child(' + index + ')').remove();
+    $('table th:nth-child(' + index + ')').remove();
 }
 
-remove('Rel 1');
-remove('Rel 2');
-   
+function rename(original, newValue) {
+    // Get target th with the name you want to remove.
+    var target = $('table').find('th:contains("' + original +'")');
+    target.text(newValue);
+}
+
+// remove('Rel 1');
+// remove('Rel 2');
+rename('Rel 1', 'Related Component 1');
+rename('Rel 2', 'Related Component 2');
+rename('Enrl Tot', 'Enrolled');
+rename('Comp Sec', 'Section');
+rename('Camp Loc', 'Campus');
+rename('Bldg Room', 'Location');
+rename('Time Days/Date', 'Date & Time');
+
 var el = third.getElementsByTagName("tr");
 var curId = -1;
 var lastId = -1;
 
+function getlen(row) {
+    var len = 0;
+    var cells = row.cells;
+
+    for (var j = 0, jLen = cells.length; j < jLen; j++) {
+        // This is very important. If you just take length you'll get the
+        // the wrong answer when colspan exists
+        len += cells[j].colSpan;
+    }
+    
+    return len;
+}
+
+// Trim table elements
+$('table td').each(function() {
+    var current = $(this);
+    current.html($.trim(current.html().replace(/\s+/g, ' ')));
+});
+
+
 for (var i = 1; i < el.length; i++) {
+    var enrol;
+    var enrolCap;
+
+    // Organize columns
     if (el[i].getElementsByTagName("td")[0].colSpan == 6) {
-        el[i].getElementsByTagName("td")[0].colSpan = 4;
-        var newCol = el[i].insertCell(); 
-        newCol.colSpan = 3;
-    }
-    else if (el[i].getElementsByTagName("td")[0].colSpan == 10) {
-        el[i].getElementsByTagName("td")[0].colSpan = 9;
-    }
-    else if (el[i].cells.length != 11) {
-        var newCol = el[i].insertCell(); 
-        newCol.colSpan = 11 - el[i].cells.length;
-        curId++;
+        var newCol = el[i].insertCell();
+        newCol.innerHTML = "&nbsp";
+        
+        enrolCap = el[i].getElementsByTagName("td")[1].innerHTML.trim();
+        enrol = el[i].getElementsByTagName("td")[2].innerHTML.trim();
+        
+        if (!isNaN(enrolCap) && !isNaN(enrol)) {
+            el[i].getElementsByTagName("td")[2].innerHTML = enrol + "/" + enrolCap;
+        }
+        el[i].deleteCell(1);
     }
     else {
         el[i].style.cursor = "pointer";
         curId++;
+        
+        enrolCap = el[i].getElementsByTagName("td")[6].innerHTML.trim();
+        enrol = el[i].getElementsByTagName("td")[7].innerHTML.trim();
+        
+        if (!isNaN(enrolCap) && !isNaN(enrol)) {
+            el[i].getElementsByTagName("td")[7].innerHTML = enrol + "/" + enrolCap;
+        }
+        el[i].deleteCell(6);
     }
     
+    var colLen = getlen(el[i]);
+    
+    console.log("Length: " + getlen(el[i]));
+    
+    if (colLen != 12) {
+        console.log("Inserted");
+        var newCol = el[i].insertCell(); 
+        newCol.colSpan = 12 - el[i].cells.length;
+    }
+    
+    console.log("Enrolled: " + enrol + "/" + enrolCap);
     el[i].className = curId;
 }
 
+remove('Enrl Cap');
+
 // Do not show pointer cursor if no child elements to hide
-for (var i = 0; i < curId; i++) {
+for (var i = 0; i <= curId; i++) {
     var numItems = $("." + i).length;
     
     if (numItems == 1 && $("." + i).first().css("cursor") == "pointer") {
@@ -118,9 +175,9 @@ for (var i = 0; i < curId; i++) {
     }
 }
 
-console.log(curId);
+console.log("curId: " + curId);
 
-for (let i = 0; i < curId; i++) {
+for (let i = 0; i <= curId; i++) {
     $("." + i + ":not(:first)").hide('fast');
     
     $("." + i + ":first").on("click",
