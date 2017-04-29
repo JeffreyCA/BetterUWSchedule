@@ -113,58 +113,82 @@ function getlen(row) {
     return len;
 }
 
-// Trim table elements
-$('table td').each(function() {
-    var current = $(this);
-    current.html($.trim(current.html().replace(/\s+/g, ' ')));
-});
-
-
-for (var i = 1; i < el.length; i++) {
-    var enrol;
-    var enrolCap;
-
-    // Organize columns
-    if (el[i].getElementsByTagName("td")[0].colSpan == 6) {
-        var newCol = el[i].insertCell();
-        newCol.innerHTML = "&nbsp";
-        
-        enrolCap = el[i].getElementsByTagName("td")[1].innerHTML.trim();
-        enrol = el[i].getElementsByTagName("td")[2].innerHTML.trim();
-        
-        if (!isNaN(enrolCap) && !isNaN(enrol)) {
-            el[i].getElementsByTagName("td")[2].innerHTML = enrol + "/" + enrolCap;
-        }
-        el[i].deleteCell(1);
-    }
-    else {
-        el[i].style.cursor = "pointer";
-        curId++;
-        
-        enrolCap = el[i].getElementsByTagName("td")[6].innerHTML.trim();
-        enrol = el[i].getElementsByTagName("td")[7].innerHTML.trim();
-        
-        if (!isNaN(enrolCap) && !isNaN(enrol)) {
-            el[i].getElementsByTagName("td")[7].innerHTML = enrol + "/" + enrolCap;
-        }
-        el[i].deleteCell(6);
-    }
-    
-    var colLen = getlen(el[i]);
-    
-    console.log("Length: " + getlen(el[i]));
-    
-    if (colLen != 12) {
-        console.log("Inserted");
-        var newCol = el[i].insertCell(); 
-        newCol.colSpan = 12 - el[i].cells.length;
-    }
-    
-    console.log("Enrolled: " + enrol + "/" + enrolCap);
-    el[i].className = curId;
+function trimElements() {
+    // Trim table elements
+    $('table td').each(function() {
+        var current = $(this);
+        current.html($.trim(current.html().replace(/\s+/g, ' ')));
+    });
 }
 
-remove('Enrl Cap');
+trimElements();
+
+function assignClassIds() {
+    for (var i = 1; i < el.length; i++) {
+        // console.log(el[i].getElementsByTagName("td").cells.length);
+        
+        // Fix row columns
+        if (el[i].getElementsByTagName("td")[0].colSpan == 6) {
+            var newCol = el[i].insertCell();
+            newCol.innerHTML = "&nbsp";
+        }
+        // Organize columns
+        else if (el[i].cells.length == 13) {
+            console.log("reached");
+            
+            el[i].style.cursor = "pointer";
+            curId++;
+        }
+        
+        el[i].className = curId;
+    }
+}
+
+assignClassIds();
+
+function mergeEnrol() {
+    for (var i = 1; i < el.length; i++) {
+        var enrol;
+        var enrolCap;
+
+        // Organize columns
+        if (el[i].getElementsByTagName("td")[0].colSpan == 6) {
+            // var newCol = el[i].insertCell();
+            // newCol.innerHTML = "&nbsp";
+            enrolCap = el[i].getElementsByTagName("td")[1].innerHTML.trim();
+            enrol = el[i].getElementsByTagName("td")[2].innerHTML.trim();
+            
+            if (!isNaN(enrolCap) && !isNaN(enrol)) {
+                el[i].getElementsByTagName("td")[2].innerHTML = enrol + "/" + enrolCap;
+            }
+            el[i].deleteCell(1);
+        }
+        else {
+            enrolCap = el[i].getElementsByTagName("td")[6].innerHTML.trim();
+            enrol = el[i].getElementsByTagName("td")[7].innerHTML.trim();
+            
+            if (!isNaN(enrolCap) && !isNaN(enrol)) {
+                el[i].getElementsByTagName("td")[7].innerHTML = enrol + "/" + enrolCap;
+            }
+            el[i].deleteCell(6);
+        }
+        
+        var colLen = getlen(el[i]);
+        
+        console.log("Length: " + getlen(el[i]));
+        
+        if (colLen != 12) {
+            console.log("Inserted");
+            var newCol = el[i].insertCell(); 
+            newCol.colSpan = 12 - el[i].cells.length;
+        }
+        
+        console.log("Enrolled: " + enrol + "/" + enrolCap);
+    }
+    remove('Enrl Cap');
+}
+
+// mergeEnrol();
 
 // Do not show pointer cursor if no child elements to hide
 for (var i = 0; i <= curId; i++) {
