@@ -72,3 +72,7 @@ table td:hover, tr:hover {
     border-left: 1px solid red;
 }
 
+.under {
+    border-bottom: 1px dashed #999;
+    text-decoration: none;
+}

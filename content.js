@@ -222,6 +222,24 @@ function mergeWait() {
 
 mergeWait();
 
+function under() {
+    
+    for (var i = 1; i < el.length; i++) {
+        var dateTime = el[i].cells[8];
+        
+        var date = ... (dateTime) ...;
+        var time = ... (dateTime) ...;
+        
+        dateTime.innerHTML = "<span class='under'>" + date + "</span> " time;
+        console.log(dateTime);
+    }
+    remove('Wait Cap');
+    
+    console.log(el[0].cells.length);
+}
+
+under();
+
 // Do not show pointer cursor if no child elements to hide
 for (var i = 0; i <= curId; i++) {
     var numItems = $("." + i).length;
