@@ -7,22 +7,25 @@ for (var i = 0, max = links.length; i < max; i++) {
 
 $('a').contents().unwrap();
 
-var first = document.getElementsByTagName("p")[0];
-var second = document.getElementsByTagName("p")[1];
-var third = document.getElementsByTagName("p")[2];
+var queryResponse = document.getElementsByTagName("p")[0];
+var queryInfo = document.getElementsByTagName("p")[1];
+var mainPara = document.getElementsByTagName("p")[2];
 
-first.outerHTML = "";
-delete first;
+queryResponse.outerHTML = "";
+delete queryResponse;
 
-second.innerHTML = second.innerHTML.replace(/Your selection was:<br>/g, "");
-second.innerHTML = second.innerHTML.replace(/ ,/g, "<br>");
+queryInfo.innerHTML = queryInfo.innerHTML.replace(/Your selection was:<br>/g, "");
+queryInfo.innerHTML = queryInfo.innerHTML.replace(/ , /g, "<br>").trim();
+
 
 var Y = "Course Number: "
-var Z = second.innerHTML.split(Y).pop();
+var Z = queryInfo.innerHTML.split(Y).pop();
 
 if (Z === "") {
-    second.innerHTML = second.innerHTML.replace(/Course Number: /g, "Course Number: N/A");
+    queryInfo.innerHTML = queryInfo.innerHTML.replace(/Course Number: /g, "Course Number: N/A");
 }
+
+queryInfo.innerHTML = queryInfo.innerHTML.replace(/([\w ]+?):/gm, "<b>$1</b>:");
 
 var table = document.getElementsByTagName("table")[0];
 var innerTable = document.getElementsByTagName("table")[1];
@@ -75,13 +78,13 @@ else {
     table.innerHTML = innerTable.innerHTML;
 }
 
-var date = third.innerHTML.split("Information last updated: ").pop();
+var date = mainPara.innerHTML.split("Information last updated: ").pop();
 date = date.replace(/<(?:.|\n)*?>/gm, "");
 
 console.log("Date: " + date);
 var d = new Date(date);
 
-third.innerHTML = third.innerHTML.replace(/Information last updated:(.*?)<\/b>/g, "Last updated on: <b>" + d.toDateString() + "</b>");
+mainPara.innerHTML = mainPara.innerHTML.replace(/Information last updated:(.*?)<\/b>/g, "Last updated on: <b>" + d.toDateString() + "</b>");
 
 // $('table th:nth-child(3), table td:nth-child(3)').remove();
 
@@ -111,7 +114,7 @@ rename('Camp Loc', 'Campus');
 rename('Bldg Room', 'Location');
 rename('Time Days/Date', 'Date & Time');
 
-var el = third.getElementsByTagName("tr");
+var el = mainPara.getElementsByTagName("tr");
 var curId = -1;
 var lastId = -1;
 
