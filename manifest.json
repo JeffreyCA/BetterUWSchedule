@@ -1,15 +1,27 @@
 {
-  "manifest_version": 2,
- 
-  "name": "Pretty UWaterloo Schedule",
-  "version": "0.1.0",
-  "description": "Improved look of UWaterloo's Schedule of Classes Page",
-  "background": {
-    "scripts": ["jquery-3.2.1.min.js"]
-  },
-  "content_scripts": [{
-    "css": ["styles.css"],
-    "js": ["jquery-3.2.1.min.js", "content.js"],
-    "matches": ["https://info.uwaterloo.ca/*", "http://www.adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl*"]
-  }]
+    "manifest_version": 2,
+    "name": "Pretty UWaterloo Schedule",
+    "version": "0.1.0",
+    "description": "Improved look of UWaterloo's Schedule of Classes Page",
+    "background": {
+        "scripts": [
+            "jquery-3.2.1.min.js"
+        ]
+    },
+    "content_scripts": [
+        {
+            "css": [
+                "styles.css"
+            ],
+            "js": [
+                "jquery-3.2.1.min.js",
+                "date.js",
+                "content.js"
+            ],
+            "matches": [
+                "https://info.uwaterloo.ca/*",
+                "http://www.adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl*"
+            ]
+        }
+    ]
 }

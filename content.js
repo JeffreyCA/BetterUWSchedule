@@ -31,7 +31,6 @@ var table = document.getElementsByTagName("table")[0];
 var innerTable = document.getElementsByTagName("table")[1];
 
 if (table.innerHTML.trim() == "") {
-    console.log("true");
     table.parentNode.removeChild(table);
 }
 else {
@@ -48,7 +47,6 @@ else {
     function getInnerTableIndex(trs) {
         for (var i = 0; i < trs.length; i++) {
             if (trs[i].contains(innerTable)) {
-                console.log("found! " + i);
                 return i;
             }
         }
@@ -81,7 +79,6 @@ else {
 var date = mainPara.innerHTML.split("Information last updated: ").pop();
 date = date.replace(/<(?:.|\n)*?>/gm, "");
 
-console.log("Date: " + date);
 var d = new Date(date);
 
 mainPara.innerHTML = mainPara.innerHTML.replace(/Information last updated:(.*?)<\/b>/g, "Last updated on: <b>" + d.toDateString() + "</b>");
@@ -146,7 +143,6 @@ function resizeTable() {
         var colLen = getlen(el[i]);
 
         if (colLen < 13) {
-            console.log("Inserted");
             var newCol = el[i].insertCell();
             newCol.colSpan = 13 - colLen;
 
@@ -156,8 +152,6 @@ function resizeTable() {
         }
         // Organize columns
         else {
-            console.log("reached");
-
             el[i].style.cursor = "pointer";
             curId++;
         }
@@ -229,13 +223,40 @@ function under() {
 
         if (cell != undefined) {
             var dateTime = cell.innerText;
+            console.log(dateTime);
 
             if (dateTime != "TBA") {
-                var split = dateTime.split(/([\d|:|-]+)([A-Z|a-z]+)/g);
-                var date = split[2];
+                // Split date/time into time, day of week, and any specific dates
+                var split = dateTime.split(/(.*?)([A-Z|a-z]+)[\S\s](.*)/g);
                 var time = split[1];
+                var days = split[2];
+                var date = split[3];
 
-                cell.innerHTML = "<span class='under'>" + time + "</span> " + date;
+                if (date) {
+                    var arr = date.split("-");
+                    var begin = Date.parseExact(arr[0], 'MM/dd');
+                    var end = Date.parseExact(arr[1], 'MM/dd');
+
+                    var dates = []
+
+                    while (begin <= end) {
+                        dates.push(begin.toString("MMMM d"));
+                        begin.addDays(1);
+                    }
+
+                    date = "(";
+
+                    for (var j = 0; j < dates.length; j++) {
+                        if (j != 0) {
+                            date += ", ";
+                        }
+                        console.log(j + ": " + dates[j]);
+                        date += dates[j];
+                    }
+                    date += ")";
+                }
+
+                cell.innerHTML = "<span class='under'>" + time + "</span><br>" + days + "<br>" + date;
 
                 $(".under").hover(function () {
                     $(this).attr('title', 'Check UWFlow or Quest to determine whether classes are AM or PM.');
@@ -244,8 +265,6 @@ function under() {
         }
     }
     remove('Wait Cap');
-
-    console.log(el[0].cells.length);
 }
 
 under();
