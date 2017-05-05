@@ -1,96 +1,103 @@
-var array = [];
-var links = document.getElementsByTagName("a");
+function cleanQueryResults() {
 
-for (var i = 0, max = links.length; i < max; i++) {
-    links[i].removeAttribute("href");
 }
 
-$('a').contents().unwrap();
+function removeHyperlinks() {
+    var links = document.getElementsByTagName("a");
+
+    for (var i = 0, max = links.length; i < max; i++) {
+        links[i].removeAttribute("href");
+    }
+
+    $('a').contents().unwrap();
+}
+
+removeHyperlinks();
 
 var queryResponse = document.getElementsByTagName("p")[0];
 var queryInfo = document.getElementsByTagName("p")[1];
-var mainPara = document.getElementsByTagName("p")[2];
+
 
 queryResponse.outerHTML = "";
-delete queryResponse;
 
 queryInfo.innerHTML = queryInfo.innerHTML.replace(/Your selection was:<br>/g, "");
 queryInfo.innerHTML = queryInfo.innerHTML.replace(/ , /g, "<br>").trim();
 
+var courseNumber = queryInfo.innerText.split("Course Number:")[1];
 
-var Y = "Course Number: "
-var Z = queryInfo.innerHTML.split(Y).pop();
-
-if (Z === "") {
-    queryInfo.innerHTML = queryInfo.innerHTML.replace(/Course Number: /g, "Course Number: N/A");
+if (!courseNumber) {
+    queryInfo.innerHTML = queryInfo.innerHTML.replace(/Course Number:/g, "Course Number: N/A");
 }
 
 queryInfo.innerHTML = queryInfo.innerHTML.replace(/([\w ]+?):/gm, "<b>$1</b>:");
 
-var table = document.getElementsByTagName("table")[0];
+var outerTable = document.getElementsByTagName("table")[0];
 var innerTable = document.getElementsByTagName("table")[1];
+var mainParagraph = document.getElementsByTagName("p")[2];
 
-if (table.innerHTML.trim() == "") {
-    table.parentNode.removeChild(table);
+// Invalid query
+if (outerTable.innerHTML.trim() == "") {
+    console.log("HELLO");
 }
 else {
-    var trs = table.getElementsByTagName("tr");
-
-    var courseRow = trs[1];
-    var courseElements = trs[1].getElementsByTagName("td");
-
-    var name = courseElements[0].innerHTML.trim();
-    var cat = courseElements[1].innerHTML.trim();
-    var unit = courseElements[2].innerHTML.trim();
-    var title = courseElements[3].innerHTML.trim();
-
-    function getInnerTableIndex(trs) {
-        for (var i = 0; i < trs.length; i++) {
-            if (trs[i].contains(innerTable)) {
-                return i;
+    function collapseCourseDesc() {
+        function getInnerTableIndex(outerTableRows) {
+            for (var i = 0; i < outerTableRows.length; i++) {
+                if (outerTableRows[i].contains(innerTable)) {
+                    return i;
+                }
             }
+            return -1;
         }
-        return -1;
+
+        var outerTableRows = outerTable.getElementsByTagName("tr");
+        var outerCourseElements = outerTableRows[1].getElementsByTagName("td");
+
+        var name = outerCourseElements[0].innerHTML.trim();
+        var cat = outerCourseElements[1].innerHTML.trim();
+        var unit = outerCourseElements[2].innerHTML.trim();
+        var title = outerCourseElements[3].innerHTML.trim();
+
+        var innerTableIndex = getInnerTableIndex(outerTableRows);
+        console.log("Inner Table Index: " + innerTableIndex);
+
+        var line1 = name + " " + cat;
+        var line2 = title;
+        var line3 = unit + " units";
+
+        var insert = `
+                    <hr>
+                    <h2>${line1}</h2>
+                    <h3>${line2}</h3>
+                    <h4>${line3}</h4>
+                    `;
+
+        for (var i = 2; i < innerTableIndex; i++) {
+            var content = outerTableRows[i].innerText;
+            insert += "<h4><b>" + content + "</b></h4>";
+        }
+
+        outerTable.insertAdjacentHTML('beforebegin', insert);
+        outerTable.innerHTML = innerTable.innerHTML;
     }
-
-    var innerTableIndex = getInnerTableIndex(trs);
-    console.log("Inner Table Index: " + innerTableIndex);
-
-    var line1 = name + " " + cat;
-    var line2 = title;
-    var line3 = unit + " units";
-
-    var insert = `
-        <hr>
-        <h2>${line1}</h2>
-        <h3>${line2}</h3>
-        <h4>${line3}</h4>
-    `;
-
-    for (var i = 2; i < innerTableIndex; i++) {
-        var content = trs[i].innerText;
-        insert += "<h4><b>" + content + "</b></h4>";
-    }
-
-    table.insertAdjacentHTML('beforebegin', insert);
-    table.innerHTML = innerTable.innerHTML;
+    collapseCourseDesc();
 }
 
-var date = mainPara.innerHTML.split("Information last updated: ").pop();
-date = date.replace(/<(?:.|\n)*?>/gm, "");
+function updateLastUpdatedText() {
+    var date = mainParagraph.innerHTML.split("Information last updated: ").pop();
+    date = date.replace(/<(?:.|\n)*?>/gm, ""); // Get rid of unused characters
 
-var d = new Date(date);
-
-mainPara.innerHTML = mainPara.innerHTML.replace(/Information last updated:(.*?)<\/b>/g, "Last updated on: <b>" + d.toDateString() + "</b>");
-
-// $('table th:nth-child(3), table td:nth-child(3)').remove();
+    var newDate = new Date(date);
+    mainParagraph.innerHTML = mainParagraph.innerHTML.replace(/Information last updated:(.*?)<\/b>/g,
+        "Last updated on: <b>" + newDate.toDateString() + "</b>");
+}
+updateLastUpdatedText();
 
 function remove(header) {
     // Get target th with the name you want to remove.
     var target = $('table').find('th:contains("' + header + '")');
     // Find its index among other ths 
     var index = (target).index() + 1;
-    console.log("index: " + index);
     // For each tr, remove all th and td that match the index.
     $('table th:nth-child(' + index + ')').remove();
 }
@@ -113,7 +120,7 @@ function renameHeaders() {
 }
 renameHeaders();
 
-var tableRowElements = mainPara.getElementsByTagName("tr");
+var tableRowElements = mainParagraph.getElementsByTagName("tr");
 var idCount = -1;
 
 function getlen(row) {
@@ -164,11 +171,11 @@ function resizeTable() {
 resizeTable();
 
 function mergeEnrolCells() {
-    function getEnrolCapCol(tr) {
+    function getEnrolCapCol(tableRow) {
         const FIXED_ENROL_CAP_COL = 6;
 
-        var colLen = getlen(tr);
-        return FIXED_ENROL_CAP_COL - (colLen - tr.cells.length);
+        var colLen = getlen(tableRow);
+        return FIXED_ENROL_CAP_COL - (colLen - tableRow.cells.length);
     }
 
     for (var i = 1; i < tableRowElements.length; i++) {
@@ -192,11 +199,11 @@ function mergeEnrolCells() {
 mergeEnrolCells();
 
 function mergeWaitlistCells() {
-    function getWaitCapCol(tr) {
+    function getWaitCapCol(tableRow) {
         const FIXED_WAIT_CAP_COL = 7;
 
-        var colLen = getlen(tr);
-        return FIXED_WAIT_CAP_COL - (colLen - tr.cells.length);
+        var colLen = getlen(tableRow);
+        return FIXED_WAIT_CAP_COL - (colLen - tableRow.cells.length);
     }
 
     for (var i = 1; i < tableRowElements.length; i++) {
