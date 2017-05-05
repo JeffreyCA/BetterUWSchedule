@@ -217,20 +217,22 @@ function mergeWait() {
 mergeWait();
 
 function under() {
-
     for (var i = 1; i < el.length; i++) {
         var cell = el[i].cells[8];
 
         if (cell != undefined) {
             var dateTime = cell.innerText;
-            console.log(dateTime);
+            console.log("dateTime: " + dateTime);
 
             if (dateTime != "TBA") {
                 // Split date/time into time, day of week, and any specific dates
-                var split = dateTime.split(/(.*?)([A-Z|a-z]+)[\S\s](.*)/g);
-                var time = split[1];
-                var days = split[2];
-                var date = split[3];
+                var exp = /(.*?)([A-Z|a-z][\S]*)[\s]*(.*)/g;
+                var match = exp.exec(dateTime);
+
+                var time = match[1];
+                var days = match[2];
+                var date = match[3];
+
 
                 if (date) {
                     var arr = date.split("-");
@@ -288,3 +290,24 @@ for (let i = 0; i <= curId; i++) {
             $("." + i + ":not(:first)").toggle('slow');
         });
 }
+
+function invertInstructorNames() {
+    function invert(name) {
+        var split = name.split(",");
+        var given = split[1];
+        var surname = split[0];
+
+        return given + " " + surname;
+    }
+
+    for (var i = 1; i < el.length; i++) {
+        var cell = el[i].cells[10];
+
+        if (cell.innerHTML) {
+            var name = cell.innerHTML;
+            cell.innerHTML = invert(name);
+        }
+    }
+}
+
+invertInstructorNames();
