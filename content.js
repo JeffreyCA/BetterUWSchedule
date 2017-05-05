@@ -101,19 +101,20 @@ function rename(original, newValue) {
     target.text(newValue);
 }
 
+function renameHeaders() {
+    rename('Rel 1', 'Related Component 1');
+    rename('Rel 2', 'Related Component 2');
+    rename('Enrl Tot', 'Enrolled');
+    rename('Wait Tot', 'Waitlist');
+    rename('Comp Sec', 'Section');
+    rename('Camp Loc', 'Campus');
+    rename('Bldg Room', 'Location');
+    rename('Time Days/Date', 'Date & Time');
+}
+renameHeaders();
 
-rename('Rel 1', 'Related Component 1');
-rename('Rel 2', 'Related Component 2');
-rename('Enrl Tot', 'Enrolled');
-rename('Wait Tot', 'Waitlist');
-rename('Comp Sec', 'Section');
-rename('Camp Loc', 'Campus');
-rename('Bldg Room', 'Location');
-rename('Time Days/Date', 'Date & Time');
-
-var el = mainPara.getElementsByTagName("tr");
-var curId = -1;
-var lastId = -1;
+var tableRowElements = mainPara.getElementsByTagName("tr");
+var idCount = -1;
 
 function getlen(row) {
     var len = 0;
@@ -139,30 +140,30 @@ function trimElements() {
 trimElements();
 
 function resizeTable() {
-    for (var i = 1; i < el.length; i++) {
-        var colLen = getlen(el[i]);
+    for (var i = 1; i < tableRowElements.length; i++) {
+        var colLen = getlen(tableRowElements[i]);
 
         if (colLen < 13) {
-            var newCol = el[i].insertCell();
+            var newCol = tableRowElements[i].insertCell();
             newCol.colSpan = 13 - colLen;
 
-            if (el[i].getElementsByTagName("td")[0].colSpan == 1) {
-                curId++;
+            if (tableRowElements[i].getElementsByTagName("td")[0].colSpan == 1) {
+                idCount++;
             }
         }
         // Organize columns
         else {
-            el[i].style.cursor = "pointer";
-            curId++;
+            tableRowElements[i].style.cursor = "pointer";
+            idCount++;
         }
 
-        el[i].className = curId;
+        tableRowElements[i].className = idCount;
     }
 }
 
 resizeTable();
 
-function mergeEnrol() {
+function mergeEnrolCells() {
     function getEnrolCapCol(tr) {
         const FIXED_ENROL_CAP_COL = 6;
 
@@ -170,27 +171,27 @@ function mergeEnrol() {
         return FIXED_ENROL_CAP_COL - (colLen - tr.cells.length);
     }
 
-    for (var i = 1; i < el.length; i++) {
-        var enrolCapCol = getEnrolCapCol(el[i]);
+    for (var i = 1; i < tableRowElements.length; i++) {
+        var enrolCapCol = getEnrolCapCol(tableRowElements[i]);
         var enrolCap;
         var enrol;
 
-        enrolCap = el[i].getElementsByTagName("td")[enrolCapCol].innerHTML.trim();
-        enrol = el[i].getElementsByTagName("td")[enrolCapCol + 1].innerHTML.trim();
+        enrolCap = tableRowElements[i].getElementsByTagName("td")[enrolCapCol].innerHTML.trim();
+        enrol = tableRowElements[i].getElementsByTagName("td")[enrolCapCol + 1].innerHTML.trim();
 
         if (!isNaN(enrolCap) && !isNaN(enrol)) {
-            el[i].getElementsByTagName("td")[enrolCapCol + 1].innerHTML = enrol + "/" + enrolCap;
+            tableRowElements[i].getElementsByTagName("td")[enrolCapCol + 1].innerHTML = enrol + "/" + enrolCap;
         }
-        el[i].deleteCell(enrolCapCol);
+        tableRowElements[i].deleteCell(enrolCapCol);
 
         console.log("Enrolled: " + enrol + "/" + enrolCap);
     }
     remove('Enrl Cap');
 }
 
-mergeEnrol();
+mergeEnrolCells();
 
-function mergeWait() {
+function mergeWaitlistCells() {
     function getWaitCapCol(tr) {
         const FIXED_WAIT_CAP_COL = 7;
 
@@ -198,98 +199,99 @@ function mergeWait() {
         return FIXED_WAIT_CAP_COL - (colLen - tr.cells.length);
     }
 
-    for (var i = 1; i < el.length; i++) {
-        var waitCapCol = getWaitCapCol(el[i]);
+    for (var i = 1; i < tableRowElements.length; i++) {
+        var waitCapCol = getWaitCapCol(tableRowElements[i]);
         var waitCap;
         var wait;
 
-        waitCap = el[i].getElementsByTagName("td")[waitCapCol].innerHTML.trim();
-        wait = el[i].getElementsByTagName("td")[waitCapCol + 1].innerHTML.trim();
+        waitCap = tableRowElements[i].getElementsByTagName("td")[waitCapCol].innerHTML.trim();
+        wait = tableRowElements[i].getElementsByTagName("td")[waitCapCol + 1].innerHTML.trim();
 
         if (!isNaN(waitCap) && !isNaN(wait)) {
-            el[i].getElementsByTagName("td")[waitCapCol + 1].innerHTML = wait + "/" + waitCap;
+            tableRowElements[i].getElementsByTagName("td")[waitCapCol + 1].innerHTML = wait + "/" + waitCap;
         }
-        el[i].deleteCell(waitCapCol);
+        tableRowElements[i].deleteCell(waitCapCol);
     }
     remove('Wait Cap');
 }
 
-mergeWait();
+mergeWaitlistCells();
 
-function under() {
-    for (var i = 1; i < el.length; i++) {
-        var cell = el[i].cells[8];
+function splitDateTimeCells() {
+    const DATE_TIME_COL = 8;
 
-        if (cell != undefined) {
-            var dateTime = cell.innerText;
-            console.log("dateTime: " + dateTime);
+    for (var i = 1; i < tableRowElements.length; i++) {
+        var dateTimeCell = tableRowElements[i].cells[DATE_TIME_COL];
 
-            if (dateTime != "TBA") {
-                // Split date/time into time, day of week, and any specific dates
-                var exp = /(.*?)([A-Z|a-z][\S]*)[\s]*(.*)/g;
-                var match = exp.exec(dateTime);
+        if (dateTimeCell && dateTimeCell.innerText != "TBA") {
+            var dateTime = dateTimeCell.innerText;
+            // Split date/time into time, day of week, and specific dates (for tests)
+            var exp = /(.*?)([A-Z|a-z][\S]*)[\s]*(.*)/g;
+            var match = exp.exec(dateTime);
 
-                var time = match[1];
-                var days = match[2];
-                var date = match[3];
+            var time = match[1];
+            var days = match[2];
+            var date = match[3];
 
+            // Date is given (i.e. for a TST)
+            if (date) {
+                var arr = date.split("-");
+                var beginDate = Date.parseExact(arr[0], 'MM/dd');
+                var endDate = Date.parseExact(arr[1], 'MM/dd');
+                var dateRange = [];
 
-                if (date) {
-                    var arr = date.split("-");
-                    var begin = Date.parseExact(arr[0], 'MM/dd');
-                    var end = Date.parseExact(arr[1], 'MM/dd');
-
-                    var dates = []
-
-                    while (begin <= end) {
-                        dates.push(begin.toString("MMMM d"));
-                        begin.addDays(1);
-                    }
-
-                    date = "(";
-
-                    for (var j = 0; j < dates.length; j++) {
-                        if (j != 0) {
-                            date += ", ";
-                        }
-                        console.log(j + ": " + dates[j]);
-                        date += dates[j];
-                    }
-                    date += ")";
+                while (beginDate <= endDate) {
+                    dateRange.push(beginDate.toString("MMMM d"));
+                    beginDate.addDays(1);
                 }
 
-                cell.innerHTML = "<span class='under'>" + time + "</span><br>" + days + "<br>" + date;
-
-                $(".under").hover(function () {
-                    $(this).attr('title', 'Check UWFlow or Quest to determine whether classes are AM or PM.');
-                });
+                // Process range of dates
+                date = "(";
+                for (var j = 0; j < dateRange.length; j++) {
+                    if (j != 0) {
+                        date += ", ";
+                    }
+                    date += dateRange[j];
+                }
+                date += ")";
             }
+
+            // Update cell content
+            dateTimeCell.innerHTML = "<span class='under'>" + time + "</span><br>" + days + "<br>" + date;
+
+            // Original page does not provide AM/PM info, maybe it could be deduced somehow?
+            // Ambiguity lies in 8-10 AM/PM
+            $(".under").hover(function () {
+                $(this).attr('title', 'Check UWFlow or Quest to determine whether classes are AM or PM.');
+            });
         }
     }
-    remove('Wait Cap');
 }
 
-under();
+splitDateTimeCells();
 
-// Do not show pointer cursor if no child elements to hide
-for (var i = 0; i <= curId; i++) {
-    var numItems = $("." + i).length;
+function setCursors() {
+    // Do not show pointer cursor if no child elements to hide
+    for (var i = 0; i <= idCount; i++) {
+        var numItems = $("." + i).length;
 
-    if (numItems == 1 && $("." + i).first().css("cursor") == "pointer") {
-        $("." + i).first().css("cursor", "auto");
+        if (numItems == 1 && $("." + i).first().css("cursor") == "pointer") {
+            $("." + i).first().css("cursor", "auto");
+        }
     }
 }
+setCursors();
 
-console.log("curId: " + curId);
-
-for (let i = 0; i <= curId; i++) {
-    $("." + i + ":not(:first)").hide('fast');
-
-    $("." + i + ":first").on("click",
-        function () {
-            $("." + i + ":not(:first)").toggle('slow');
-        });
+function setToggleListeners() {
+    for (let i = 0; i <= idCount; i++) {
+        $("." + i + ":not(:first)").hide('fast');
+        $("." + i + ":first").on("click",
+            function () {
+                $("." + i + ":not(:first)").toggle('slow');
+            });
+    }
 }
+setToggleListeners();
 
 function invertInstructorNames() {
     function invert(name) {
@@ -300,10 +302,10 @@ function invertInstructorNames() {
         return given + " " + surname;
     }
 
-    for (var i = 1; i < el.length; i++) {
-        var cell = el[i].cells[10];
+    for (var i = 1; i < tableRowElements.length; i++) {
+        var cell = tableRowElements[i].cells[10];
 
-        if (cell.innerHTML) {
+        if (cell && cell.innerHTML) {
             var name = cell.innerHTML;
             cell.innerHTML = invert(name);
         }
