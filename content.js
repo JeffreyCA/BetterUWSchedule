@@ -1,98 +1,96 @@
-function cleanQueryResults() {
+function main() {
+    function cleanQueryResults() {
+        var queryInfo = document.getElementsByTagName("p")[1];
 
-}
+        document.getElementsByTagName("p")[0].outerHTML = ""; // Remove entire element
 
-function removeHyperlinks() {
-    var links = document.getElementsByTagName("a");
+        queryInfo.innerHTML = queryInfo.innerHTML.replace(/Your selection was:<br>/g, "");
+        queryInfo.innerHTML = queryInfo.innerHTML.replace(/ , /g, "<br>").trim();
 
-    for (var i = 0, max = links.length; i < max; i++) {
-        links[i].removeAttribute("href");
-    }
+        var courseNumber = queryInfo.innerText.split("Course Number:")[1];
 
-    $('a').contents().unwrap();
-}
-
-removeHyperlinks();
-
-var queryResponse = document.getElementsByTagName("p")[0];
-var queryInfo = document.getElementsByTagName("p")[1];
-
-
-queryResponse.outerHTML = "";
-
-queryInfo.innerHTML = queryInfo.innerHTML.replace(/Your selection was:<br>/g, "");
-queryInfo.innerHTML = queryInfo.innerHTML.replace(/ , /g, "<br>").trim();
-
-var courseNumber = queryInfo.innerText.split("Course Number:")[1];
-
-if (!courseNumber) {
-    queryInfo.innerHTML = queryInfo.innerHTML.replace(/Course Number:/g, "Course Number: N/A");
-}
-
-queryInfo.innerHTML = queryInfo.innerHTML.replace(/([\w ]+?):/gm, "<b>$1</b>:");
-
-var outerTable = document.getElementsByTagName("table")[0];
-var innerTable = document.getElementsByTagName("table")[1];
-var mainParagraph = document.getElementsByTagName("p")[2];
-
-// Invalid query
-if (outerTable.innerHTML.trim() == "") {
-    console.log("HELLO");
-}
-else {
-    function collapseCourseDesc() {
-        function getInnerTableIndex(outerTableRows) {
-            for (var i = 0; i < outerTableRows.length; i++) {
-                if (outerTableRows[i].contains(innerTable)) {
-                    return i;
-                }
-            }
-            return -1;
+        if (!courseNumber) {
+            queryInfo.innerHTML = queryInfo.innerHTML.replace(/Course Number:/g, "Course Number: N/A");
         }
 
-        var outerTableRows = outerTable.getElementsByTagName("tr");
-        var outerCourseElements = outerTableRows[1].getElementsByTagName("td");
+        queryInfo.innerHTML = queryInfo.innerHTML.replace(/([\w ]+?):/gm, "<b>$1</b>:");
+    }
 
-        var name = outerCourseElements[0].innerHTML.trim();
-        var cat = outerCourseElements[1].innerHTML.trim();
-        var unit = outerCourseElements[2].innerHTML.trim();
-        var title = outerCourseElements[3].innerHTML.trim();
+    function removeHyperlinks() {
+        var links = document.getElementsByTagName("a");
 
-        var innerTableIndex = getInnerTableIndex(outerTableRows);
-        console.log("Inner Table Index: " + innerTableIndex);
+        for (var i = 0, max = links.length; i < max; i++) {
+            links[i].removeAttribute("href");
+        }
 
-        var line1 = name + " " + cat;
-        var line2 = title;
-        var line3 = unit + " units";
+        $('a').contents().unwrap();
+    }
+    cleanQueryResults();
+    removeHyperlinks();
 
-        var insert = `
+    // Global variables
+    var outerTable = document.getElementsByTagName("table")[0];
+    var innerTable = document.getElementsByTagName("table")[1];
+    var mainParagraph = document.getElementsByTagName("p")[2];
+
+    // Invalid query
+    if (outerTable.innerHTML.trim() != "") {
+        function collapseCourseDesc() {
+            function getInnerTableIndex(outerTableRows) {
+                for (var i = 0; i < outerTableRows.length; i++) {
+                    if (outerTableRows[i].contains(innerTable)) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+
+            var outerTableRows = outerTable.getElementsByTagName("tr");
+            var outerCourseElements = outerTableRows[1].getElementsByTagName("td");
+
+            var name = outerCourseElements[0].innerHTML.trim();
+            var cat = outerCourseElements[1].innerHTML.trim();
+            var unit = outerCourseElements[2].innerHTML.trim();
+            var title = outerCourseElements[3].innerHTML.trim();
+
+            var innerTableIndex = getInnerTableIndex(outerTableRows);
+            console.log("Inner Table Index: " + innerTableIndex);
+
+            var line1 = name + " " + cat;
+            var line2 = title;
+            var line3 = unit + " units";
+
+            var insert = `
                     <hr>
                     <h2>${line1}</h2>
                     <h3>${line2}</h3>
                     <h4>${line3}</h4>
                     `;
 
-        for (var i = 2; i < innerTableIndex; i++) {
-            var content = outerTableRows[i].innerText;
-            insert += "<h4><b>" + content + "</b></h4>";
+            for (var i = 2; i < innerTableIndex; i++) {
+                var content = outerTableRows[i].innerText;
+                insert += "<h4><b>" + content + "</b></h4>";
+            }
+
+            outerTable.insertAdjacentHTML('beforebegin', insert);
+            outerTable.innerHTML = innerTable.innerHTML;
         }
 
-        outerTable.insertAdjacentHTML('beforebegin', insert);
-        outerTable.innerHTML = innerTable.innerHTML;
+        function updateLastUpdatedText() {
+            var date = mainParagraph.innerHTML.split("Information last updated: ").pop();
+            date = date.replace(/<(?:.|\n)*?>/gm, ""); // Get rid of unused characters
+
+            var newDate = new Date(date);
+            mainParagraph.innerHTML = mainParagraph.innerHTML.replace(/Information last updated:(.*?)<\/b>/g,
+                "Last updated on: <b>" + newDate.toDateString() + "</b>");
+        }
+
+        collapseCourseDesc();
+        updateLastUpdatedText();
     }
-    collapseCourseDesc();
 }
-
-function updateLastUpdatedText() {
-    var date = mainParagraph.innerHTML.split("Information last updated: ").pop();
-    date = date.replace(/<(?:.|\n)*?>/gm, ""); // Get rid of unused characters
-
-    var newDate = new Date(date);
-    mainParagraph.innerHTML = mainParagraph.innerHTML.replace(/Information last updated:(.*?)<\/b>/g,
-        "Last updated on: <b>" + newDate.toDateString() + "</b>");
-}
-updateLastUpdatedText();
-
+main();
+var mainParagraph = document.getElementsByTagName("p")[2];
 function remove(header) {
     // Get target th with the name you want to remove.
     var target = $('table').find('th:contains("' + header + '")');
