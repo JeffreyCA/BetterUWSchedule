@@ -77,3 +77,8 @@ table td:hover, tr:hover {
     border-bottom: 1px dashed #999;
     text-decoration: none;
 }
+
+hr {
+    margin-top: 20px;
+    max-width: 80%;
+}

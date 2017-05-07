@@ -42,6 +42,7 @@ function main() {
     var mainParagraph = document.getElementsByTagName("p")[1];
     var tableRowElements = mainParagraph.getElementsByTagName("tr");
     var idCount = -1;
+    var tableCount = document.getElementsByTagName("table").length - 1;
 
     function collapseOuterTable(k) {
         innerTable = document.getElementsByTagName("table")[k + 1];
@@ -91,7 +92,7 @@ function main() {
         outerTable.insertAdjacentHTML('beforebegin', innerTable.outerHTML);
     }
 
-    for (var b = 0; b < 2; b++) {
+    for (var b = 0; b < tableCount; b++) {
         collapseOuterTable(b);
     }
 
@@ -149,13 +150,13 @@ function main() {
             return len;
         }
 
-        function remove(header) {
+        function remove(tableIndex, header) {
             // Get target th with the name you want to remove.
             var target = $('table').find('th:contains("' + header + '")');
             // Find its index among other ths 
             var index = (target).index() + 1;
             // For each tr, remove all th and td that match the index.
-            $('table th:nth-child(' + index + ')').remove();
+            $('table th:nth-child(' + index + ')').eq(tableIndex).remove();
         }
 
         function resizeTable() {
@@ -180,7 +181,9 @@ function main() {
             }
         }
 
-        function mergeEnrolCells() {
+        function mergeEnrolCells(p) {
+            var tableRowElements = document.getElementsByTagName("table")[p].getElementsByTagName("tr");
+
             function getEnrolCapCol(tableRow) {
                 const FIXED_ENROL_CAP_COL = 6;
 
@@ -193,6 +196,10 @@ function main() {
                 var enrolCap;
                 var enrol;
 
+                if (enrolCapCol <= 0) {
+                    continue;
+                }
+
                 enrolCap = tableRowElements[i].getElementsByTagName("td")[enrolCapCol].innerHTML.trim();
                 enrol = tableRowElements[i].getElementsByTagName("td")[enrolCapCol + 1].innerHTML.trim();
 
@@ -203,10 +210,12 @@ function main() {
 
                 console.log("Enrolled: " + enrol + "/" + enrolCap);
             }
-            remove('Enrl Cap');
+            remove(p, 'Enrl Cap');
         }
 
-        function mergeWaitlistCells() {
+        function mergeWaitlistCells(p) {
+            var tableRowElements = document.getElementsByTagName("table")[p].getElementsByTagName("tr");
+
             function getWaitCapCol(tableRow) {
                 const FIXED_WAIT_CAP_COL = 7;
 
@@ -219,6 +228,10 @@ function main() {
                 var waitCap;
                 var wait;
 
+                if (waitCapCol <= 0) {
+                    continue;
+                }
+
                 waitCap = tableRowElements[i].getElementsByTagName("td")[waitCapCol].innerHTML.trim();
                 wait = tableRowElements[i].getElementsByTagName("td")[waitCapCol + 1].innerHTML.trim();
 
@@ -227,10 +240,11 @@ function main() {
                 }
                 tableRowElements[i].deleteCell(waitCapCol);
             }
-            remove('Wait Cap');
+            remove(p, 'Wait Cap');
         }
 
-        function splitDateTimeCells() {
+        function splitDateTimeCells(p) {
+            var tableRowElements = document.getElementsByTagName("table")[p].getElementsByTagName("tr");
             const DATE_TIME_COL = 8;
 
             for (var i = 1; i < tableRowElements.length; i++) {
@@ -251,22 +265,13 @@ function main() {
                         var arr = date.split("-");
                         var beginDate = Date.parseExact(arr[0], 'MM/dd');
                         var endDate = Date.parseExact(arr[1], 'MM/dd');
-                        var dateRange = [];
 
-                        while (beginDate <= endDate) {
-                            dateRange.push(beginDate.toString("MMMM d"));
-                            beginDate.addDays(1);
+                        if (beginDate == endDate) {
+                            date = "(" + beginDate.toString("MMMM d") + ")";
                         }
-
-                        // Process range of dates
-                        date = "(";
-                        for (var j = 0; j < dateRange.length; j++) {
-                            if (j != 0) {
-                                date += ", ";
-                            }
-                            date += dateRange[j];
+                        else {
+                            date = "(" + beginDate.toString("MMMM d") + " - " + endDate.toString("MMMM d") + ")";
                         }
-                        date += ")";
                     }
 
                     // Update cell content
@@ -281,7 +286,9 @@ function main() {
             }
         }
 
-        function invertInstructorNames() {
+        function invertInstructorNames(p) {
+            var tableRowElements = document.getElementsByTagName("table")[p].getElementsByTagName("tr");
+
             function invert(name) {
                 var split = name.split(",");
                 var given = split[1];
@@ -301,10 +308,14 @@ function main() {
         }
 
         resizeTable();
-        mergeEnrolCells();
-        mergeWaitlistCells();
-        splitDateTimeCells();
-        invertInstructorNames();
+
+
+        for (var p = 0; p < tableCount; p++) {
+            mergeEnrolCells(p);
+            mergeWaitlistCells(p);
+            splitDateTimeCells(p);
+            invertInstructorNames(p);
+        }
     }
 
     function setToggleBehaviour() {
@@ -333,8 +344,8 @@ function main() {
     }
 
     updateText();
-    // transformTable();
-    // setToggleBehaviour();
+    transformTable();
+    setToggleBehaviour();
 }
 
 main();
