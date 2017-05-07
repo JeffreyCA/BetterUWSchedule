@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
     "name": "Pretty UWaterloo Schedule",
-    "version": "0.1.0",
-    "description": "Improved look of UWaterloo's Schedule of Classes Page",
+    "version": "1.0.0",
+    "description": "Improves look of UWaterloo's Schedule of Classes Page",
     "background": {
         "scripts": [
             "jquery-3.2.1.min.js"
