@@ -10,10 +10,18 @@ An improvement to viewing University of Waterloo *Schedule of Classes* pages.
 
 ## Comparison
 
-The default course schedule pages have no styling and are very ugly and cluttered. See the following comparisons:
-
-
+The default course schedule pages have no styling and are very ugly and cluttered. See the following comparison:
+| Disabled  | Enabled |
+|---|---|
+|  ![Default layout](assets/Before.png) |  ![Extension enabled](assets/After.png) |
 
 ## Installation
 
-Provide code examples and explanations of how to get the project.
+1. Download `pretty_uw_course_schedule.crx` file from [Releases](https://github.com/JeffreyCA/PrettyUWCourseSchedule/releases).
+2. In Chrome, go to [Extensions](chrome://extensions/).
+3. Drag `pretty_uw_course_schedule.crx` into window.
+4. Click **Add Extension**.
+
+## Credits
+* `datejs` and `jQuery` libraries
+* [UWFlow.com](https://uwflow.com) for inspiration

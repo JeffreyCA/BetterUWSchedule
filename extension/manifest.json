@@ -1,0 +1,25 @@
+{
+    "manifest_version": 2,
+    "name": "Pretty UW Course Schedule",
+    "version": "1.0.0",
+    "description": "An improvement to viewing University of Waterloo Schedule of Classes pages",
+    "background": {
+        "scripts": [
+            "js/jquery-3.2.1.min.js"
+        ]
+    },
+    "content_scripts": [{
+        "css": [
+            "css/styles.css"
+        ],
+        "js": [
+            "js/jquery-3.2.1.min.js",
+            "js/date.js",
+            "js/content.js"
+        ],
+        "matches": [
+            "https://info.uwaterloo.ca/*",
+            "http://www.adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl*"
+        ]
+    }]
+}
