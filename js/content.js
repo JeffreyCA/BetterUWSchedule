@@ -1,3 +1,10 @@
+/**
+ * content.js
+ * Author: JeffreyCA
+ * 
+ * Main script that transforms the course schedule webpage.
+ */
+
 function main() {
     function cleanQueryResults() {
         var queryInfo = document.getElementsByTagName("p")[1];
@@ -206,6 +213,8 @@ function main() {
         function splitDateTimeCells(tableRowElements) {
             const DATE_TIME_COL = 8;
 
+            var allDays = ['M', 'T', 'W', 'Th', 'F', 'S', 'Su'];
+
             for (var i = 1; i < tableRowElements.length; i++) {
                 var dateTimeCell = tableRowElements[i].cells[DATE_TIME_COL];
 
@@ -219,6 +228,29 @@ function main() {
                     var days = match[2];
                     var date = match[3];
 
+                    // Split days into array
+                    var daysArr = days.split(/(?=[A-Z])/);
+
+                    days = "";
+
+                    // Display all days of week: MTWThFSSu, but make inactive days light grey and active days black
+                    for (var p = 0; p < allDays.length; p++) {
+                        var found = false;
+
+                        for (var q = 0; q < daysArr.length; q++) {
+                            if (allDays[p] == daysArr[q]) {
+                                found = true;
+                                days += allDays[p];
+                                daysArr.splice(q, 1);
+                                break;
+                            }
+                        }
+
+                        if (!found) {
+                            days += "<span class='inactive_day'>" + allDays[p] + "</span>";
+                        }
+                    }
+
                     // Date is given (i.e. for a TST)
                     if (date) {
                         var arr = date.split("-");
@@ -227,20 +259,16 @@ function main() {
 
                         if (beginDate == endDate) {
                             date = "(" + beginDate.toString("MMMM d") + ")";
-                        }
-                        else {
+                        } else {
                             date = "(" + beginDate.toString("MMMM d") + " - " + endDate.toString("MMMM d") + ")";
                         }
                     }
 
-                    // Update cell content
-                    dateTimeCell.innerHTML = "<span class='under'>" + time + "</span><br>" + days + "<br>" + date;
-
                     // Original page does not provide AM/PM info, maybe it could be deduced somehow?
                     // Ambiguity lies in 8-10 AM/PM
-                    $(".under").hover(function () {
-                        $(this).attr('title', 'Check UWFlow or Quest to determine whether classes are AM or PM.');
-                    });
+                    var warningMsg = 'Check UWFlow or Quest to determine whether classes are AM or PM.';
+
+                    dateTimeCell.innerHTML = "<span class='under' title='" + warningMsg + "'>" + time + "</span><br>" + days + "<br>" + date;
                 }
             }
         }
@@ -310,7 +338,7 @@ function main() {
 
         function trimTableWhiteSpaces() {
             // Trim table elements
-            $('table td').each(function () {
+            $('table td').each(function() {
                 var current = $(this);
                 current.html($.trim(current.html().replace(/\s+/g, ' ')));
             });
@@ -337,7 +365,7 @@ function main() {
             for (let i = 0; i <= idCount; i++) {
                 $("." + i + ":not(:first)").hide('fast');
                 $("." + i + ":first").on("click",
-                    function () {
+                    function() {
                         $("." + i + ":not(:first)").toggle('slow');
                     });
             }

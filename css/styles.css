@@ -1,5 +1,4 @@
 html {
-    /* font-family: "Helvetica", "Calibri", "Arial", "sans-serif"; */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
@@ -8,19 +7,22 @@ body h1 {
     text-align: center;
 }
 
-body h2, h3, h4 {
+body h2,
+h3,
+h4 {
     line-height: 0px;
 }
 
 body h2 {
-   font-size: 42px;
+    font-size: 42px;
 }
 
 body h3 {
-   font-size: 24px;
+    font-size: 24px;
 }
 
-body h3, h4 {
+body h3,
+h4 {
     font-family: "Calibri";
     font-weight: lighter;
 }
@@ -37,7 +39,7 @@ table {
     border-spacing: 0;
     width: 90%;
     margin: 0 auto;
-    border:1px solid #D3D3D3;
+    border: 1px solid #D3D3D3;
     border-radius: 3px;
 }
 
@@ -50,9 +52,10 @@ th {
     border: 0;
 }
 
-th, td {
+th,
+td {
     padding: 8px;
-    text-align:center;
+    text-align: center;
     border: 0;
     border-bottom: 1px solid #ddd;
     white-space: nowrap;
@@ -60,22 +63,20 @@ th, td {
 
 tr {
     border: 0;
-    border-left: 1px solid red;
-    /* border-bottom: 1px solid #ddd; */
 }
 
-table td:hover, tr:hover {
+table td:hover,
+tr:hover {
     background: #f5f5f5;
-}
-
-/* Colour coding will be done according to class name */
-.lec {
-    border-left: 1px solid red;
 }
 
 .under {
     border-bottom: 1px dashed #999;
     text-decoration: none;
+}
+
+.inactive_day {
+    color: #999;
 }
 
 hr {
