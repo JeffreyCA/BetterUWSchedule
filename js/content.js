@@ -74,6 +74,7 @@ function main() {
         }
 
         function collapseOuterTable(table) {
+            const ROWS_TO_REMOVE = 4;
             var innerTable = document.getElementsByTagName("table")[table + 1];
 
             function getInnerTableIndex(outerTableRows) {
@@ -94,7 +95,6 @@ function main() {
             var title = outerCourseElements[3].innerHTML.trim();
 
             var innerTableIndex = getInnerTableIndex(outerTableRows);
-            console.log("Inner Table Index: " + innerTableIndex);
 
             var line1 = name + " " + cat;
             var line2 = title;
@@ -112,27 +112,34 @@ function main() {
                     <h4>${line3}</h4>
                     `;
 
+            var extra = false;
             for (var i = 2; i < innerTableIndex; i++) {
                 var content = outerTableRows[i].innerText;
                 insert += "<h4><b>" + content + "</b></h4>";
+                extra = true;
             }
 
-            outerTable.deleteRow(0);
-            outerTable.deleteRow(0);
-            outerTable.deleteRow(0);
-            outerTable.deleteRow(0);
+            for (var row = 0; row < ROWS_TO_REMOVE; row++) {
+                outerTable.deleteRow(0);
+            }
+
+            if (extra) {
+                outerTable.deleteRow(0);
+            }
 
             outerTable.insertAdjacentHTML('beforebegin', insert);
             outerTable.insertAdjacentHTML('beforebegin', innerTable.outerHTML);
         }
 
         function resizeTable(tableRowElements) {
+            const COLUMNS = 13;
+
             for (var i = 1; i < tableRowElements.length; i++) {
                 var colLen = getlen(tableRowElements[i]);
 
-                if (colLen < 13) {
+                if (colLen < COLUMNS) {
                     var newCol = tableRowElements[i].insertCell();
-                    newCol.colSpan = 13 - colLen;
+                    newCol.colSpan = COLUMNS - colLen;
 
                     if (tableRowElements[i].getElementsByTagName("td")[0].colSpan == 1) {
                         idCount++;
@@ -163,7 +170,6 @@ function main() {
 
                 // No such enrol cap column
                 if (enrolCapCol < 0) {
-                    console.log(enrolCapCol);
                     tableRowElements[i].deleteCell(tableRowElements[i].cells.length - 1);
                     continue;
                 }
@@ -175,8 +181,6 @@ function main() {
                     tableRowElements[i].getElementsByTagName("td")[enrolCapCol + 1].innerHTML = enrol + "/" + enrolCap;
                 }
                 tableRowElements[i].deleteCell(enrolCapCol);
-
-                console.log("Enrolled: " + enrol + "/" + enrolCap);
             }
             remove(table, 'Enrl Cap');
         }
@@ -373,12 +377,6 @@ function main() {
         setCursors();
         setToggleListeners();
     }
-
-    /*
-        for (var b = 0; b < tableCount; b++) {
-            collapseOuterTable(b);
-        }
-    */
 
     transformTable();
     updateText();
