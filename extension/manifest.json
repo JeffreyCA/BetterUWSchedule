@@ -27,7 +27,8 @@
             "https://info.uwaterloo.ca/*",
             "http://www.adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl*",
             "http://www.adm.uwaterloo.ca/infocour/CIR/SA/under.html"
-        ]
+        ],
+        "run_at": "document_end"
     }],
     "web_accessible_resources": ["images/chosen-sprite.png", "images/chosen-sprite@2x.png", "images/on.png", "images/off.png"]
 }

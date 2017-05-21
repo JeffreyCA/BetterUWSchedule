@@ -5,6 +5,15 @@
  * Script that deals with loading CSS and JS files depending on current page.
  */
 
+// On load, set icon according to setting in localStorage
+(function setInitialIcon() {
+    if (!localStorage['enabled'] || localStorage['enabled'] == 'true') {
+        chrome.browserAction.setIcon({ path: "images/on.png" });
+    } else {
+        chrome.browserAction.setIcon({ path: "images/off.png" });
+    }
+})();
+
 // Inject CSS, JS files according to current URL
 function injectResources(tab) {
     const FORM_URL = "http://www.adm.uwaterloo.ca/infocour/CIR/SA/under.html";
