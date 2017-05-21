@@ -19,7 +19,7 @@ function injectResources(tab) {
             chrome.tabs.insertCSS(tab.id, {
                 file: "css/chosen.css"
             }, function() {
-                chrome.tabs.executeScript(tab.id, { file: "js/chosen.jquery.js" },
+                chrome.tabs.executeScript(tab.id, { file: "js/chosen-jquery.js" },
                     function() {
                         chrome.tabs.executeScript(tab.id, { file: "js/content-form.js" });
                     });
