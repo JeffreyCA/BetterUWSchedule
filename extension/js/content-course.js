@@ -1,12 +1,55 @@
 /**
- * content.js
+ * content-course.js
  * Author: JeffreyCA
  * 
- * Main script that transforms the course schedule webpage.
+ * Script that is executed on query results page.
  */
 
 function main() {
     function cleanQueryResults() {
+        function expandTermInfo(queryInfo) {
+            const MIN_TERM = 1071;
+            // Calculate next term with possibly available info
+            const MAX_TERM = (function() {
+                var current = new Date();
+                var yr = parseInt(current.getFullYear().toString().substr(2, 2), 10);
+                var month = current.getMonth();
+
+                if (month >= 0 && month < 4) {
+                    return "1" + yr + "5";
+                } else if (month >= 4 && month < 8) {
+                    return "1" + yr + "9";
+                } else {
+                    return "1" + yr + "1";
+                }
+            })();
+
+            var exp = /(Term: )(.*)/g;
+            var match = exp.exec(queryInfo.innerText);
+            var term = match[2];
+
+            if (term && term >= MIN_TERM && term <= MAX_TERM) {
+                var year = "20" + ('' + term)[1] + ('' + term)[2];
+                var season = ('' + term)[3];
+
+                season = (function(season) {
+                    if (season == 1)
+                        return "Winter";
+                    else if (season == 5)
+                        return "Spring"
+                    else if (season == 9)
+                        return "Fall"
+                    else
+                        return "???"
+                })(season);
+
+                var extra = " (" + season + " " + year + ")";
+
+                exp = new RegExp(term.toString(), "g");
+                queryInfo.innerHTML = queryInfo.innerHTML.replace(exp, term + extra);
+            }
+        }
+
         var queryInfo = document.getElementsByTagName("p")[1];
 
         document.getElementsByTagName("p")[0].outerHTML = ""; // Remove entire element
@@ -14,6 +57,7 @@ function main() {
         queryInfo.innerHTML = queryInfo.innerHTML.replace(/Your selection was:<br>/g, "");
         queryInfo.innerHTML = queryInfo.innerHTML.replace(/ , /g, "<br>").trim();
 
+        expandTermInfo(queryInfo);
         var courseNumber = queryInfo.innerText.split("Course Number:")[1];
 
         if (!courseNumber) {
@@ -40,7 +84,7 @@ function main() {
     var outerTable = document.getElementsByTagName("table")[0];
 
     // Invalid query, end script here
-    if (outerTable.innerHTML.trim() == "") {
+    if (!outerTable || outerTable.innerHTML.trim() == "") {
         return;
     }
 
@@ -261,11 +305,12 @@ function main() {
                         var beginDate = Date.parseExact(arr[0], 'MM/dd');
                         var endDate = Date.parseExact(arr[1], 'MM/dd');
 
-                        if (beginDate == endDate) {
-                            date = "(" + beginDate.toString("MMMM d") + ")";
-                        } else {
-                            date = "(" + beginDate.toString("MMMM d") + " - " + endDate.toString("MMMM d") + ")";
-                        }
+                        if (beginDate && endDate)
+                            if (beginDate.toDateString == endDate.toDateString) {
+                                date = "(" + beginDate.toString("MMMM d") + ")";
+                            } else {
+                                date = "(" + beginDate.toString("MMMM d") + " - " + endDate.toString("MMMM d") + ")";
+                            }
                     }
 
                     // Original page does not provide AM/PM info, maybe it could be deduced somehow?
@@ -383,4 +428,6 @@ function main() {
     setToggleBehaviour();
 }
 
-main();
+if (window.location.href != "http://www.adm.uwaterloo.ca/infocour/CIR/SA/under.html") {
+    main();
+}

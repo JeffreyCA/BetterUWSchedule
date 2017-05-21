@@ -5,21 +5,27 @@
     "description": "An improvement to viewing University of Waterloo Schedule of Classes pages",
     "background": {
         "scripts": [
-            "js/jquery-3.2.1.min.js"
+            "js/jquery-3.2.1.min.js",
+            "js/background.js"
         ]
     },
+    "permissions": [
+        "tabs",
+        "https://info.uwaterloo.ca/*",
+        "http://www.adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl*",
+        "http://www.adm.uwaterloo.ca/infocour/CIR/SA/under.html"
+    ],
     "content_scripts": [{
-        "css": [
-            "css/styles.css"
-        ],
         "js": [
             "js/jquery-3.2.1.min.js",
             "js/date.js",
-            "js/content.js"
+            "js/content-course.js"
         ],
         "matches": [
             "https://info.uwaterloo.ca/*",
-            "http://www.adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl*"
+            "http://www.adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl*",
+            "http://www.adm.uwaterloo.ca/infocour/CIR/SA/under.html"
         ]
-    }]
+    }],
+    "web_accessible_resources": ["images/chosen-sprite.png", "images/chosen-sprite@2x.png"]
 }
