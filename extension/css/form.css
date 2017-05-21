@@ -17,3 +17,8 @@ body h1 {
 body h2 {
     font-size: 18px;
 }
+
+body {
+    margin-left: 24px;
+    margin-right: 24px;
+}

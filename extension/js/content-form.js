@@ -5,6 +5,17 @@
  * Script that is executed on the form page (http://www.adm.uwaterloo.ca/infocour/CIR/SA/under.html)
  */
 
+function setUpdateText() {
+    var body = document.getElementsByTagName("body")[0];
+    var dateStr = body.innerText.split("Page last generated: ").pop();
+    var date = new Date(dateStr);
+
+    var txt = date.toDateString() + " " + date.toString("hh:mm tt");
+
+    body.innerHTML = body.innerHTML.replace(/Page last generated:(.*)/g,
+        "Page last generated: <b>" + txt + "</b>");
+}
+
 function organizeElements() {
     var body = document.getElementsByTagName("body")[0];
 
@@ -64,7 +75,6 @@ function addAdditionalTerms() {
         // 5 - Spring
         // 9 - Fall
         var season = ('' + term)[3];
-        console.log(season);
         season = (function(season) {
             if (season == 1)
                 return "Winter";
@@ -102,6 +112,6 @@ function addAdditionalTerms() {
     // Activate Chosen
     $("select[name=sess]").chosen({ width: 'auto' });
 }
+setUpdateText();
 organizeElements();
 addAdditionalTerms();
-activateChosen();
