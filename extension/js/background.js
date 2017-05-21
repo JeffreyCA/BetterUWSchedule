@@ -53,9 +53,9 @@ function injectResources(tab) {
 chrome.tabs.onUpdated.addListener(function(tabId, info, tab) {
     // Set corresponding extension icon
     if (!localStorage['enabled'] || localStorage['enabled'] == 'true') {
-        chrome.browserAction.setIcon({ path: "icon/on.png", tabId: tab.id });
+        chrome.browserAction.setIcon({ path: "icon/on.png" });
     } else {
-        chrome.browserAction.setIcon({ path: "icon/off.png", tabId: tab.id });
+        chrome.browserAction.setIcon({ path: "icon/off.png" });
     }
 
     // Page finished loading
@@ -72,10 +72,10 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     // Add toggle state to localStorage if not set yet
     if (!localStorage['enabled'] || localStorage['enabled'] == 'true') {
         localStorage['enabled'] = 'false';
-        chrome.browserAction.setIcon({ path: "icon/off.png", tabId: tab.id });
+        chrome.browserAction.setIcon({ path: "icon/off.png" });
     } else {
         localStorage['enabled'] = 'true';
-        chrome.browserAction.setIcon({ path: "icon/on.png", tabId: tab.id });
+        chrome.browserAction.setIcon({ path: "icon/on.png" });
     }
     // Refresh current tab
     chrome.tabs.reload(tab.id);
