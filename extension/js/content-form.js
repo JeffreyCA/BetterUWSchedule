@@ -40,32 +40,17 @@ function organizeElements() {
 }
 
 function addAdditionalTerms() {
+    const TERMS_TO_SHOW = 6;
     const ABS_MIN_TERM = 1071; // Earliest term that has properly formatted tables
+    const MAX_TERM = $('select[name=sess] option:last-child').val();
 
-    // Calculate next term
-    // E.g, if current term is 1175, then MAX_TERM is 1179.
-    const MAX_TERM = parseInt((function() {
-        var current = new Date();
-        var yr = parseInt(current.getFullYear().toString().substr(2, 2), 10);
-        var month = current.getMonth();
-
-        if (month >= 0 && month < 4) {
-            return "1" + yr + "9";
-        } else if (month >= 4 && month < 8) {
-            return "1" + (yr + 1) + "1";
-        } else {
-            return "1" + yr + "5";
-        }
-    })());
-
-    // MAX_TERM - ABS_MIN_TERM would be too many terms in between, 
-    // limit to last 6 terms (2 years) + next term
+    // MAX_TERM - ABS_MIN_TERM would be too many terms in between,
+    // so limit to last 6 terms (2 years) + next term
     const TERM_DIFF = 4;
-    const MIN_TERM = MAX_TERM - 6 * TERM_DIFF;
+    const MIN_TERM = MAX_TERM - (TERMS_TO_SHOW * TERM_DIFF);
 
     var termSelect = $('select[name=sess]');
     termSelect.empty();
-    var select = document.getElementsByName('sess')[0];
 
     function termToString(term) {
         // Year is the second and third digits of term number

@@ -9,26 +9,12 @@ function main() {
     function cleanQueryResults() {
         function expandTermInfo(queryInfo) {
             const MIN_TERM = 1071;
-            // Calculate next term with possibly available info
-            const MAX_TERM = (function() {
-                var current = new Date();
-                var yr = parseInt(current.getFullYear().toString().substr(2, 2), 10);
-                var month = current.getMonth();
-
-                if (month >= 0 && month < 4) {
-                    return "1" + yr + "5";
-                } else if (month >= 4 && month < 8) {
-                    return "1" + yr + "9";
-                } else {
-                    return "1" + yr + "1";
-                }
-            })();
 
             var exp = /(Term: )(.*)/g;
             var match = exp.exec(queryInfo.innerText);
             var term = match[2];
 
-            if (term && term >= MIN_TERM && term <= MAX_TERM) {
+            if (term && term >= MIN_TERM) {
                 var year = "20" + ('' + term)[1] + ('' + term)[2];
                 var season = ('' + term)[3];
 
@@ -191,8 +177,12 @@ function main() {
                 }
                 // Organize columns
                 else {
-                    tableRowElements[i].style.cursor = "pointer";
                     idCount++;
+                }
+
+                // Change cursor if current row is class row
+                if (!isNaN(tableRowElements[i].getElementsByTagName("td")[0].innerText)) {
+                    tableRowElements[i].style.cursor = "pointer";
                 }
 
                 tableRowElements[i].className = idCount;
@@ -202,6 +192,23 @@ function main() {
         function mergeEnrolCells(tableRowElements, table) {
             function getEnrolCapCol(tableRow) {
                 const FIXED_ENROL_CAP_COL = 6;
+
+                var spanCount = 0;
+                var indexCount = 0;
+                var broke = false;
+
+                $(tableRow).find('td').each(function(){                    
+                    if (spanCount == FIXED_ENROL_CAP_COL) {
+                        broke = true;
+                        return false;
+                    }
+                    spanCount += $(this).prop("colSpan");
+                    indexCount++;
+                });
+
+                if (broke) {
+                    return indexCount;
+                }
 
                 var colLen = getlen(tableRow);
                 return FIXED_ENROL_CAP_COL - (colLen - tableRow.cells.length);
@@ -247,6 +254,10 @@ function main() {
                     continue;
                 }
 
+                if (!tableRowElements[i].getElementsByTagName("td")[waitCapCol]) {
+                    continue;
+                }
+                
                 waitCap = tableRowElements[i].getElementsByTagName("td")[waitCapCol].innerHTML.trim();
                 wait = tableRowElements[i].getElementsByTagName("td")[waitCapCol + 1].innerHTML.trim();
 
