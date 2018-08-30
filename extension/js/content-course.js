@@ -272,6 +272,9 @@ function main() {
                     var exp = /(.*?)([A-Z|a-z][\S]*)[\s]*(.*)/g;
                     var match = exp.exec(dateTime);
 
+                    if (!match) {
+                        continue;
+                    }
                     var time = match[1];
                     var days = match[2];
                     var date = match[3];
@@ -313,11 +316,7 @@ function main() {
                             }
                     }
 
-                    // Original page does not provide AM/PM info, maybe it could be deduced somehow?
-                    // Ambiguity lies in 8-10 AM/PM
-                    var warningMsg = 'Check UWFlow or Quest to determine whether classes are AM or PM.';
-
-                    dateTimeCell.innerHTML = "<span class='under' title='" + warningMsg + "'>" + time + "</span><br>" + days + "<br>" + date;
+                    dateTimeCell.innerHTML = time + "<br>" + days + "<br>" + date;
                 }
             }
         }

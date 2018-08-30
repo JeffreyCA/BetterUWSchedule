@@ -50,11 +50,11 @@ function addAdditionalTerms() {
         var month = current.getMonth();
 
         if (month >= 0 && month < 4) {
-            return "1" + yr + "5";
-        } else if (month >= 4 && month < 8) {
             return "1" + yr + "9";
+        } else if (month >= 4 && month < 8) {
+            return "1" + (yr + 1) + "1";
         } else {
-            return "1" + yr + "1";
+            return "1" + yr + "5";
         }
     })());
 
