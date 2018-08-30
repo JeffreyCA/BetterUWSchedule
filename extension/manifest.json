@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Pretty UW Course Schedule",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "description": "An improvement to viewing University of Waterloo Schedule of Classes pages",
     "icons": {
         "16": "icon/icon16.png",
@@ -19,7 +19,8 @@
     },
     "permissions": [
         "tabs",
-        "https://info.uwaterloo.ca/*",
+        "https://info.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl*",
+        "https://info.uwaterloo.ca/infocour/CIR/SA/under.html",
         "http://www.adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl*",
         "http://www.adm.uwaterloo.ca/infocour/CIR/SA/under.html"
     ],
@@ -29,7 +30,8 @@
             "js/date.js"
         ],
         "matches": [
-            "https://info.uwaterloo.ca/*",
+            "https://info.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl*",
+            "https://info.uwaterloo.ca/infocour/CIR/SA/under.html",
             "http://www.adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl*",
             "http://www.adm.uwaterloo.ca/infocour/CIR/SA/under.html"
         ],
