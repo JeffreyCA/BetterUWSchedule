@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Pretty UW Course Schedule",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "An improvement to viewing University of Waterloo Schedule of Classes pages",
     "icons": {
         "16": "icon/icon16.png",
