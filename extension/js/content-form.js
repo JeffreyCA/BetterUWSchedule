@@ -5,6 +5,9 @@
  * Script that is executed on the form page (http://www.adm.uwaterloo.ca/infocour/CIR/SA/under.html)
  */
 
+var selectedCourse = $("select[name=subject]").find(":selected").text()
+var selectedNumber = $("input[name=cournum]").val()
+
 function setUpdateText() {
     var body = document.getElementsByTagName("body")[0];
     var dateStr = body.innerText.split("Page last generated: ").pop();
@@ -12,8 +15,7 @@ function setUpdateText() {
 
     var txt = date.toDateString() + " " + date.toString("hh:mm tt");
 
-    body.innerHTML = body.innerHTML.replace(/Page last generated:(.*)/g,
-        "Page last generated: <b>" + txt + "</b>");
+    body.innerHTML = body.innerHTML.replace(/Page last generated:(.*)/g, "Page last generated: <b>" + txt + "</b>");
 }
 
 function organizeElements() {
@@ -36,7 +38,9 @@ function organizeElements() {
 
     $('p:last').css('text-align', 'center');
     $("select[name=subject]").before("\t Subject: ");
+    $(`select[name=subject] option[value=${selectedCourse}]`).prop('selected', true);
     $("select[name=subject]").chosen({ width: '100px' });
+    $("input[name=cournum]").val(selectedNumber);
 }
 
 function addAdditionalTerms() {
@@ -60,7 +64,7 @@ function addAdditionalTerms() {
         // 5 - Spring
         // 9 - Fall
         var season = ('' + term)[3];
-        season = (function(season) {
+        season = (function (season) {
             if (season == 1)
                 return "Winter";
             else if (season == 5)
@@ -97,6 +101,7 @@ function addAdditionalTerms() {
     // Activate Chosen
     $("select[name=sess]").chosen({ width: 'auto' });
 }
+
 setUpdateText();
 organizeElements();
 addAdditionalTerms();
