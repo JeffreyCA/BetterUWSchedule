@@ -18,7 +18,7 @@ function main() {
                 var year = "20" + ('' + term)[1] + ('' + term)[2];
                 var season = ('' + term)[3];
 
-                season = (function(season) {
+                season = (function (season) {
                     if (season == 1)
                         return "Winter";
                     else if (season == 5)
@@ -92,6 +92,11 @@ function main() {
             }
 
             return len;
+        }
+
+        function getColIndex(tableRow, fixedCol) {
+            var colLen = getlen(tableRow);
+            return fixedCol - (colLen - tableRow.cells.length);
         }
 
         function remove(tableIndex, header) {
@@ -197,7 +202,7 @@ function main() {
                 var indexCount = 0;
                 var broke = false;
 
-                $(tableRow).find('td').each(function(){                    
+                $(tableRow).find('td').each(function () {
                     if (spanCount == FIXED_ENROL_CAP_COL) {
                         broke = true;
                         return false;
@@ -221,7 +226,14 @@ function main() {
 
                 // No such enrol cap column
                 if (enrolCapCol < 0) {
-                    tableRowElements[i].deleteCell(tableRowElements[i].cells.length - 1);
+                    var firstTd = $(tableRowElements[i]).find('td:first-child');
+                    var firstTdColSpan = firstTd.prop('colSpan');
+
+                    if (firstTdColSpan > 1) {
+                        firstTd.prop('colSpan', firstTdColSpan - 1);
+                    } else {
+                        tableRowElements[i].deleteCell(tableRowElements[i].cells.length - 1);
+                    }
                     continue;
                 }
 
@@ -237,27 +249,29 @@ function main() {
         }
 
         function mergeWaitlistCells(tableRowElements, table) {
-            function getWaitCapCol(tableRow) {
-                const FIXED_WAIT_CAP_COL = 7;
-
-                var colLen = getlen(tableRow);
-                return FIXED_WAIT_CAP_COL - (colLen - tableRow.cells.length);
-            }
+            const FIXED_WAIT_CAP_COL = 7;
 
             for (var i = 1; i < tableRowElements.length; i++) {
-                var waitCapCol = getWaitCapCol(tableRowElements[i]);
+                var waitCapCol = getColIndex(tableRowElements[i], FIXED_WAIT_CAP_COL);
                 var waitCap;
                 var wait;
 
                 if (waitCapCol < 0) {
-                    tableRowElements[i].deleteCell(tableRowElements[i].cells.length - 1);
+                    var firstTd = $(tableRowElements[i]).find('td:first-child');
+                    var firstTdColSpan = firstTd.prop('colSpan');
+
+                    if (firstTdColSpan > 1) {
+                        firstTd.prop('colSpan', firstTdColSpan - 1);
+                    } else {
+                        tableRowElements[i].deleteCell(tableRowElements[i].cells.length - 1);
+                    }
                     continue;
                 }
 
                 if (!tableRowElements[i].getElementsByTagName("td")[waitCapCol]) {
                     continue;
                 }
-                
+
                 waitCap = tableRowElements[i].getElementsByTagName("td")[waitCapCol].innerHTML.trim();
                 wait = tableRowElements[i].getElementsByTagName("td")[waitCapCol + 1].innerHTML.trim();
 
@@ -271,11 +285,16 @@ function main() {
 
         function splitDateTimeCells(tableRowElements) {
             const DATE_TIME_COL = 8;
-
             var allDays = ['M', 'T', 'W', 'Th', 'F', 'S', 'Su'];
 
             for (var i = 1; i < tableRowElements.length; i++) {
-                var dateTimeCell = tableRowElements[i].cells[DATE_TIME_COL];
+                var dateTimeCol = getColIndex(tableRowElements[i], DATE_TIME_COL);
+
+                if (dateTimeCol < 0) {
+                    continue;
+                }
+
+                var dateTimeCell = tableRowElements[i].cells[dateTimeCol];
 
                 if (dateTimeCell && dateTimeCell.innerText != "TBA") {
                     var dateTime = dateTimeCell.innerText;
@@ -341,12 +360,20 @@ function main() {
                 return given + " " + surname;
             }
 
-            for (var i = 1; i < tableRowElements.length; i++) {
-                var cell = tableRowElements[i].cells[10];
+            const FIXED_INSTRUCTOR_COL = 10;
 
-                if (cell && cell.innerHTML) {
-                    var name = cell.innerHTML;
-                    cell.innerHTML = invert(name);
+            for (var i = 1; i < tableRowElements.length; i++) {
+                var instructorCol = getColIndex(tableRowElements[i], FIXED_INSTRUCTOR_COL);
+
+                if (instructorCol < 0) {
+                    continue;
+                }
+
+                var instructorCell = tableRowElements[i].cells[instructorCol];
+
+                if (instructorCell && instructorCell.innerHTML) {
+                    var name = instructorCell.innerHTML;
+                    instructorCell.innerHTML = invert(name);
                 }
             }
         }
@@ -397,7 +424,7 @@ function main() {
 
         function trimTableWhiteSpaces() {
             // Trim table elements
-            $('table td').each(function() {
+            $('table td').each(function () {
                 var current = $(this);
                 current.html($.trim(current.html().replace(/\s+/g, ' ')));
             });
@@ -424,7 +451,7 @@ function main() {
             for (let i = 0; i <= idCount; i++) {
                 $("." + i + ":not(:first)").hide('fast');
                 $("." + i + ":first").on("click",
-                    function() {
+                    function () {
                         $("." + i + ":not(:first)").toggle('slow');
                     });
             }
