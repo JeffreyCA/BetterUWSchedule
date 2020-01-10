@@ -18,21 +18,19 @@
 function injectResources(tab) {
     const FORM_URL1 = "adm.uwaterloo.ca/infocour/CIR/SA/under.html";
     const FORM_URL2 = "info.uwaterloo.ca/infocour/CIR/SA/under.html";
-    const COURSE_URL1 = "adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl";
-    const COURSE_URL2 = "info.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl";
 
     var tabUrl = tab.url;
 
     // Current tab is form page
     if (tabUrl.includes(FORM_URL1) || tabUrl.includes(FORM_URL2)) {
-        chrome.tabs.executeScript(tab.id, { file: "js/jquery-3.2.1.min.js" });
+        chrome.tabs.executeScript(tab.id, { file: "js/jquery-3.4.1.min.js" });
         chrome.tabs.insertCSS(tab.id, {
             file: "css/form.css"
         }, function() {
             chrome.tabs.insertCSS(tab.id, {
                 file: "css/chosen.css"
             }, function() {
-                chrome.tabs.executeScript(tab.id, { file: "js/chosen-jquery.js" },
+                chrome.tabs.executeScript(tab.id, { file: "js/chosen.jquery.min.js" },
                     function() {
                         chrome.tabs.executeScript(tab.id, { file: "js/content-form.js" });
                     });
@@ -44,7 +42,7 @@ function injectResources(tab) {
         tabUrl.includes("adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl") ||
         tabUrl.includes("adm.uwaterloo.ca/infocour/CIR/SA/under.html")) {
 
-        // chrome.tabs.executeScript(tab.id, { file: "js/jquery-3.2.1.min.js" });
+        chrome.tabs.executeScript(tab.id, { file: "js/jquery-3.4.1.min.js" });
         chrome.tabs.executeScript(tab.id, { file: "js/content-course.js" }, function() {
             chrome.tabs.insertCSS(tab.id, {
                 file: "css/course.css"
