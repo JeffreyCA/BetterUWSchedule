@@ -5,6 +5,9 @@
  * Script that deals with loading CSS and JS files depending on current page.
  */
 
+const FORM_URL = "classes.uwaterloo.ca/under.html";
+const RESULTS_URL = "classes.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl";
+
 // On load, set icon according to setting in localStorage
 (function setInitialIcon() {
     if (!localStorage['enabled'] || localStorage['enabled'] == 'true') {
@@ -16,14 +19,11 @@
 
 // Inject CSS, JS files according to current URL
 function injectResources(tab) {
-    const FORM_URL1 = "adm.uwaterloo.ca/infocour/CIR/SA/under.html";
-    const FORM_URL2 = "info.uwaterloo.ca/infocour/CIR/SA/under.html";
-
     var tabUrl = tab.url;
 
     // Current tab is form page
-    if (tabUrl.includes(FORM_URL1) || tabUrl.includes(FORM_URL2)) {
-        chrome.tabs.executeScript(tab.id, { file: "js/jquery-3.4.1.min.js" });
+    if (tabUrl.includes(FORM_URL)) {
+        chrome.tabs.executeScript(tab.id, { file: "js/jquery-3.5.1.min.js" });
         chrome.tabs.insertCSS(tab.id, {
             file: "css/form.css"
         }, function() {
@@ -38,11 +38,8 @@ function injectResources(tab) {
         });
     }
     // Current tab is course page
-    else if (tabUrl.includes("info.uwaterloo.ca") ||
-        tabUrl.includes("adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl") ||
-        tabUrl.includes("adm.uwaterloo.ca/infocour/CIR/SA/under.html")) {
-
-        chrome.tabs.executeScript(tab.id, { file: "js/jquery-3.4.1.min.js" });
+    else if (tabUrl.includes(RESULTS_URL)) {
+        chrome.tabs.executeScript(tab.id, { file: "js/jquery-3.5.1.min.js" });
         chrome.tabs.executeScript(tab.id, { file: "js/content-course.js" }, function() {
             chrome.tabs.insertCSS(tab.id, {
                 file: "css/course.css"

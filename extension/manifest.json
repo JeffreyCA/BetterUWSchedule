@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Pretty UW Course Schedule",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "description": "Prettify the UWaterloo Schedule of Classes page!",
     "icons": {
         "16": "icon/icon16.png",
@@ -19,21 +19,17 @@
     },
     "permissions": [
         "tabs",
-        "https://info.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl*",
-        "https://info.uwaterloo.ca/infocour/CIR/SA/under.html",
-        "http://www.adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl*",
-        "http://www.adm.uwaterloo.ca/infocour/CIR/SA/under.html"
+        "https://classes.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl",
+        "https://classes.uwaterloo.ca/under.html"
     ],
     "content_scripts": [{
         "js": [
-            "js/jquery-3.4.1.min.js",
+            "js/jquery-3.5.1.min.js",
             "js/date.js"
         ],
         "matches": [
-            "https://info.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl*",
-            "https://info.uwaterloo.ca/infocour/CIR/SA/under.html",
-            "http://www.adm.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl*",
-            "http://www.adm.uwaterloo.ca/infocour/CIR/SA/under.html"
+            "https://classes.uwaterloo.ca/cgi-bin/cgiwrap/infocour/salook.pl",
+            "https://classes.uwaterloo.ca/under.html"
         ],
         "run_at": "document_end"
     }],
